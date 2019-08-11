@@ -24,7 +24,17 @@
    )
 )
 
+(define (neighbors_test)
+  (cond ((and
+         (equal? (neighbors 'a test_graph) '(b c) )
+         (equal? (neighbors 'c test_graph) '(a d) )
+         ) (print "OK neighbors_test"))
+        (else (print "FAILED neighbors_test"))
+   )
+)
+
 ;; Runs all finder tests
 (define (run_finder)
   (find_node_test)
+  (neighbors_test)
 )
