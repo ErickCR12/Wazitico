@@ -1,25 +1,53 @@
 #lang racket
 
 (provide find_path
+         find_all_paths
          find_node
          extend
          neighbors)
 
 
 ;; Finds the shorter path between two points
+;; Uses Deep First Search
 ;; Returns a pair with the path as a list and the total weight
 (define (find_path start end graph)
-  (find_path_aux (list (list start)) end graph)
+  (find_path_aux (list (list start)) end graph)        
 )
 
-(define (find_path_aux paths end graph)
+(define (find_path_aux paths end graph) 
   (cond ((null? paths) '())
         ((equal? end (caar paths)) (reverse (car paths)))
-        (else (find_path_aux (append (extend (car paths) graph) (cdr paths)) end graph))
+        (else (find_path_aux (append
+                             (extend (car paths) graph)
+                             (cdr paths))
+                            end
+                            graph))
    )
 )
 
 
+;; Finds all paths between two points
+;; Uses Width First Search
+(define (find_all_paths start end graph)
+  (find_all_paths_aux (list (list start)) end graph '())        
+)
+
+(define (find_all_paths_aux paths end graph result)
+  (cond ((null? paths) (map reverse result))
+        ((equal? end (caar paths)) (find_all_paths_aux (cdr paths)
+                                                 end
+                                                 graph
+                                                 (cons (car paths) result)) )
+        (else (find_all_paths_aux (append  
+                             (extend (car paths) graph)
+                             (cdr paths))
+                            end
+                            graph
+                            result))
+   )
+)
+
+    
 ;; Finds new paths following the given one
 (define (extend path graph)
   (extend_aux (neighbors (car path) graph) '() path)
@@ -27,7 +55,7 @@
 
 (define (extend_aux neighbors result path)
   (cond ((null? neighbors) result)
-        ((member (car neighbors) path) '())
+        ((member (car neighbors) path) (extend_aux (cdr neighbors) result path ))
         (else (extend_aux (cdr neighbors)
                           (append result (list(list* (car neighbors) path)))
                           path ))

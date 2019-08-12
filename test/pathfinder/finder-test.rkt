@@ -14,16 +14,15 @@
 )
 
 
-;; Finds a path from a to b
+;; Finds a path from a to b using Deep First Search
 (define (find_path_test)
   (cond ((and
-         (equal? (find_path 'a 'd test_graph) '(a b d) )
+         (equal? (find_path 'a 'd test_graph) '(a b c d) )
          (equal? (find_path 'a 'e test_graph) '() )  
          ) (print "OK find_path_test"))
         (else (print "FAILED find_path_test"))
    )
 )
-
 
 ;; Find Node in Graph_test
 (define (find_node_test)
@@ -41,8 +40,7 @@
 (define (neighbors_test)
   (cond ((and
          (equal? (neighbors 'a test_graph) '(b c) )
-         (equal? (neighbors 'c test_graph) '(a d) )
-         (equal? (extend '(c b a) test_graph) '() )
+         (equal? (neighbors 'c test_graph) '(a d) )     
          ) (print "OK neighbors_test"))
         (else (print "FAILED neighbors_test"))
    )
@@ -54,6 +52,8 @@
   (cond ((and
          (equal? (extend '(a) test_graph) '((b a) (c a)) )
          (equal? (extend '(b a) test_graph) '((c b a) (d b a)) )
+         (equal? (extend '(c b a) test_graph) '((d c b a)) )
+         (equal? (extend '(c a) test_graph) '((d c a)) )
          ) (print "OK extend_test"))
         (else (print "FAILED extend_test"))
    )
