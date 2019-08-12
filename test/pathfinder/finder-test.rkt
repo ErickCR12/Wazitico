@@ -68,6 +68,16 @@
    )
 )
 
+;; Finds distance in a path
+(define (path_distance_test)
+  (cond ((and
+         (equal? (path_distance '(a b c) test_graph) 11 )
+         (equal? (path_distance '(a b c e) test_graph) +inf.0 )
+         ) (print "OK path_distance_test"))
+        (else (print "FAILED path_distance_test"))
+   )
+)
+
 ;; Finds distance between two nodes
 (define (nodes_distance_test)
   (cond ((and
@@ -86,5 +96,6 @@
   (find_node_test) (newline)
   (neighbors_test) (newline)
   (extend_test) (newline)
+  (path_distance_test) (newline)
   (nodes_distance_test)
 )

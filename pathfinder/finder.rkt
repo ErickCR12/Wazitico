@@ -5,6 +5,7 @@
          find_node
          extend
          neighbors
+         path_distance
          nodes_distance)
 
 
@@ -83,6 +84,15 @@
 (define (neighbors_aux pairs result)
   (cond ((null? pairs) result)
         (else  (neighbors_aux (cdr pairs) (append result (list(caar pairs)) )))
+  )
+)
+
+
+;; Finds the distance for the path in the graph
+(define (path_distance path graph)
+  (cond ((<= (length path) 1) 0)
+        (else (+ (nodes_distance (car path) (cadr path) graph)
+                 (path_distance (cdr path) graph)))
   )
 )
 
