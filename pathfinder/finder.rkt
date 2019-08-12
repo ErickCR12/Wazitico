@@ -19,10 +19,21 @@
    )
 )
 
+
 ;; Finds new paths following the given one
-(define (extend paths graph)
-  '()
+(define (extend path graph)
+  (extend_aux (neighbors (car path) graph) '() path)
 )
+
+(define (extend_aux neighbors result path)
+  (cond ((null? neighbors) result)
+        (else (extend_aux (cdr neighbors)
+                          (append result (list(list* (car neighbors) path)))
+                          path ))
+   )
+)
+  
+
 
 ;; Searchs for a given node in the graph
 ;; Retunrs the node and neighbors
@@ -33,7 +44,9 @@
    )
 )
 
+
 ;; Return the neighbors from a node as a list
+;; The node must exist
 (define (neighbors node graph)
   (neighbors_aux (last (find_node node graph)) '())
 )

@@ -13,7 +13,7 @@
      )
 )
 
-;; Find Node in Graph test
+;; Find Node in Graph_test
 (define (find_node_test)
   (cond ((and
          (equal? (find_node 'a test_graph) '(a ((b 5) (c 8))) )
@@ -24,6 +24,7 @@
    )
 )
 
+;; Find the Neighbors of a Node in Graph_test
 (define (neighbors_test)
   (cond ((and
          (equal? (neighbors 'a test_graph) '(b c) )
@@ -33,8 +34,19 @@
    )
 )
 
+(define (extend_test)
+  (cond ((and
+         (equal? (extend '(a) test_graph) '((b a) (c a)) )
+         (equal? (extend '(b a) test_graph) '((c b a) (d b a)) )
+         ) (print "OK extend_test"))
+        (else (print "FAILED extend_test"))
+   )
+)
+
 ;; Runs all finder tests
 (define (run_finder)
-  (find_node_test)
-  (neighbors_test)
+  (print "[Finder Test]") (newline)
+  (find_node_test) (newline)
+  (neighbors_test) (newline)
+  (extend_test)
 )
