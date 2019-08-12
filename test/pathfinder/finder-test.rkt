@@ -68,6 +68,16 @@
    )
 )
 
+;; Finds distance between two nodes
+(define (nodes_distance_test)
+  (cond ((and
+         (equal? (nodes_distance 'a 'c test_graph) 8 )
+         (equal? (nodes_distance 'd 'c test_graph) +inf.0 )
+         ) (print "OK nodes_distance_test"))
+        (else (print "FAILED nodes_distance_test"))
+   )
+)
+
 ;; Runs all finder tests
 (define (run_finder)
   (print "[Finder Test]") (newline)
@@ -75,5 +85,6 @@
   (find_all_paths_test) (newline)
   (find_node_test) (newline)
   (neighbors_test) (newline)
-  (extend_test)
+  (extend_test) (newline)
+  (nodes_distance_test)
 )

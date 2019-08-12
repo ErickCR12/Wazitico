@@ -4,7 +4,8 @@
          find_all_paths
          find_node
          extend
-         neighbors)
+         neighbors
+         nodes_distance)
 
 
 ;; Finds the shorter path between two points
@@ -86,4 +87,16 @@
 )
 
 
-  
+;; Finds the distance between two nodes in a graph
+(define (nodes_distance start end graph)
+  (cond ((member end (neighbors start graph))
+         (nodes_distance_aux end (last (find_node start graph))) )
+        (else +inf.0)
+  )
+)
+
+(define (nodes_distance_aux end neighbors)
+  (cond ((equal? end (caar neighbors)) (last (car neighbors)))
+        (else (nodes_distance_aux end (cdr neighbors)))
+  )
+)
