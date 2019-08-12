@@ -13,6 +13,18 @@
      )
 )
 
+
+;; Finds a path from a to b
+(define (find_path_test)
+  (cond ((and
+         (equal? (find_path 'a 'd test_graph) '(a b d) )
+         (equal? (find_path 'a 'e test_graph) '() )  
+         ) (print "OK find_path_test"))
+        (else (print "FAILED find_path_test"))
+   )
+)
+
+
 ;; Find Node in Graph_test
 (define (find_node_test)
   (cond ((and
@@ -24,16 +36,20 @@
    )
 )
 
+
 ;; Find the Neighbors of a Node in Graph_test
 (define (neighbors_test)
   (cond ((and
          (equal? (neighbors 'a test_graph) '(b c) )
          (equal? (neighbors 'c test_graph) '(a d) )
+         (equal? (extend '(c b a) test_graph) '() )
          ) (print "OK neighbors_test"))
         (else (print "FAILED neighbors_test"))
    )
 )
 
+
+;; Extends the paths to their neighbors
 (define (extend_test)
   (cond ((and
          (equal? (extend '(a) test_graph) '((b a) (c a)) )
@@ -43,9 +59,11 @@
    )
 )
 
+
 ;; Runs all finder tests
 (define (run_finder)
   (print "[Finder Test]") (newline)
+  (find_path_test) (newline)
   (find_node_test) (newline)
   (neighbors_test) (newline)
   (extend_test)

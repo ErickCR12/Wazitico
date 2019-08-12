@@ -14,7 +14,7 @@
 
 (define (find_path_aux paths end graph)
   (cond ((null? paths) '())
-        ((equal? end (car paths)) (reverse (car paths)))
+        ((equal? end (caar paths)) (reverse (car paths)))
         (else (find_path_aux (append (extend (car paths) graph) (cdr paths)) end graph))
    )
 )
@@ -27,13 +27,13 @@
 
 (define (extend_aux neighbors result path)
   (cond ((null? neighbors) result)
+        ((member (car neighbors) path) '())
         (else (extend_aux (cdr neighbors)
                           (append result (list(list* (car neighbors) path)))
                           path ))
    )
 )
   
-
 
 ;; Searchs for a given node in the graph
 ;; Retunrs the node and neighbors
