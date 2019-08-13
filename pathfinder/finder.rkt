@@ -8,6 +8,8 @@
          path_distance
          nodes_distance)
 
+(require "../util/list-functions.rkt")
+
 
 ;; Finds the shorter path between two points
 ;; Uses Deep First Search
@@ -35,7 +37,7 @@
 )
 
 (define (find_all_paths_aux paths end graph result)
-  (cond ((null? paths) (map reverse result))
+  (cond ((null? paths) (reverse_all result))
         ((equal? end (caar paths)) (find_all_paths_aux (cdr paths)
                                                  end
                                                  graph
