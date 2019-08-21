@@ -5,7 +5,9 @@
          addAllNodes
          addEdge)
 
-
+;;hasNode?
+;;Receives a node and a graph structure.
+;;Returns a boolean indicating if the received node exists in the graph.
 (define (hasNode? node graph)
   (cond ((null? graph)
          #f)
@@ -14,6 +16,9 @@
         (else
          (hasNode? node (cdr graph)))))
 
+;;addNode
+;;Receives a node and a graph structure.
+;;In case the node doesn't exists in the graph, it adds the new node into the graph.
 (define (addNode newNode graph)
   (cond ((not(hasNode? newNode graph))
          (append graph (list (list newNode '()))))
@@ -21,6 +26,9 @@
          graph)))
 
 
+;;addAllNodes
+;;
+;;
 (define (addAllNodes nodeList graph)
   (addAllNodesAux nodeList graph))
 
@@ -46,7 +54,9 @@
          (cond (isDirected?
                 (addEdgeAux originNode endNode weight graph))
                (else
-                (addEdgeAux endNode originNode weight (addEdgeAux originNode endNode weight graph)))))))
+                (addEdgeAux endNode originNode weight (addEdgeAux originNode endNode weight graph)))))
+        (else
+         '())))
 
 
 (define (addEdgeAux originNode endNode weight tempGraph)
