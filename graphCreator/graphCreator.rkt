@@ -1,9 +1,6 @@
 #lang racket
 
 
-(define graph '())
-
-
 (define (hasNode? node graph)
   (cond ((null? graph)
          #f)
@@ -14,14 +11,21 @@
 
 
 (define (addNode newNode)
-  (cond ((not(hasNode? newNode graph))
-         (set! graph (append graph (list (list newNode '())))))))
+  (append (list (list newNode '()))))
 
 
-(define (addAllNodes nodeList)
-  (cond ((not(null? nodeList))
-         (addNode (car nodeList))
-         (addAllNodes (cdr nodeList)))))
+(define (addAllNodes nodeList graph)
+  (append graph (addAllNodesAux nodeList graph)))
+
+
+(define (addAllNodesAux nodeList graph)
+  (cond ((null? nodeList)
+         '())
+        (else
+         (cond ((not(hasNode? (car nodeList) graph))
+                (append (addNode (car nodeList)) (addAllNodesAux (cdr nodeList) graph)))
+               (else
+                (addAllNodesAux (cdr nodeList) graph))))))
 
 
 (define (hasEdge? newNode edgesList)
@@ -33,11 +37,12 @@
          (hasEdge? newNode (cdr edgesList)))))
 
 
-(define (addEdge originNode endNode weight isDirected?)
+(define (addEdge originNode endNode weight isDirected? graph)
   (cond ((and (hasNode? originNode graph) (hasNode? endNode graph))
-         (set! graph (addEdgeAux originNode endNode weight graph))
-         (cond ((not isDirected?)
-                (set! graph (addEdgeAux endNode originNode weight graph)))))))
+         (cond (isDirected?
+                (addEdgeAux originNode endNode weight graph))
+               (else
+                (addEdgeAux endNode originNode weight (addEdgeAux originNode endNode weight graph)))))))
 
 
 (define (addEdgeAux originNode endNode weight tempGraph)
@@ -50,8 +55,9 @@
                       (else
                        (append (list(list originNode (append (list (list endNode weight)) (cadar tempGraph)))) (cdr tempGraph)))))
                (else
-                (append (list(car tempGraph)) (addEdgeAux originNode endNode weight (cdr tempGraph))))))
+                (append tempGraph (addEdgeAux originNode endNode weight '())))))
         (else
          (append (list(car tempGraph)) (addEdgeAux originNode endNode weight (cdr tempGraph))))))
-         
+
+
   
