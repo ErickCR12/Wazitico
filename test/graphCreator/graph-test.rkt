@@ -38,7 +38,9 @@
 (define (run_creator)
   (addAllNodes_test)
   (addNode_test)
-  (addEdge_test))
+  (addEdge_test)
+  (print graph)
+  (set! graph '()))
 
   
 
