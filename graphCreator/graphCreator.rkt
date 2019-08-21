@@ -33,9 +33,11 @@
          (hasEdge? newNode (cdr edgesList)))))
 
 
-(define (addEdge originNode endNode weight)
+(define (addEdge originNode endNode weight isDirected?)
   (cond ((and (hasNode? originNode graph) (hasNode? endNode graph))
-         (set! graph (addEdgeAux originNode endNode weight graph)))))
+         (set! graph (addEdgeAux originNode endNode weight graph))
+         (cond ((not isDirected?)
+                (set! graph (addEdgeAux endNode originNode weight graph)))))))
 
 
 (define (addEdgeAux originNode endNode weight tempGraph)
