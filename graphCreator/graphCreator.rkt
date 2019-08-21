@@ -1,6 +1,11 @@
 #lang racket
 
 
+(provide addNode
+         addAllNodes
+         addEdge)
+
+
 (define (hasNode? node graph)
   (cond ((null? graph)
          #f)
@@ -9,23 +14,22 @@
         (else
          (hasNode? node (cdr graph)))))
 
-
-(define (addNode newNode)
-  (append (list (list newNode '()))))
+(define (addNode newNode graph)
+  (cond ((not(hasNode? newNode graph))
+         (append graph (list (list newNode '()))))
+        (else
+         graph)))
 
 
 (define (addAllNodes nodeList graph)
-  (append graph (addAllNodesAux nodeList graph)))
+  (addAllNodesAux nodeList graph))
 
 
 (define (addAllNodesAux nodeList graph)
   (cond ((null? nodeList)
-         '())
+         graph)
         (else
-         (cond ((not(hasNode? (car nodeList) graph))
-                (append (addNode (car nodeList)) (addAllNodesAux (cdr nodeList) graph)))
-               (else
-                (addAllNodesAux (cdr nodeList) graph))))))
+         (addAllNodesAux (cdr nodeList) (addNode (car nodeList) graph)))))
 
 
 (define (hasEdge? newNode edgesList)
