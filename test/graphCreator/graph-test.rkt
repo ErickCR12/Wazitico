@@ -36,6 +36,7 @@
          (print "FAILED addEdge_test")(newline))))
 
 (define (run_creator)
+  (newline)(newline)(print "[Graph Creator Test]")(newline)
   (addAllNodes_test)
   (addNode_test)
   (addEdge_test)
