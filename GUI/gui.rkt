@@ -1,4 +1,12 @@
 #lang racket/gui
+
+(require racket/gui
+         racket/draw)
+(require "../drawer/drawer.rkt")
+(require "../graphCreator/graphCreator.rkt")
+(require "../pathfinder/finder.rkt")
+
+
 (define bitmap-blank
   (lambda [[w 0] [h #false] #:backing-scale [backing-scale 2.0]]
     (define width  (max 1 (exact-ceiling w)))
@@ -21,10 +29,11 @@
                    (or (send dc get-bitmap) (bitmap-blank)))])]))
 
 
-(define logo (make-object bitmap% "assets/logo.png"))
-(define logou (make-object bitmap% "assets/logounder.png"))
+(define logo (make-object bitmap% "../assets/logo.png"))
+(define logou (make-object bitmap% "../assets/logounder.png"))
 
-(define coords-list '() )
+(define coords-list '())
+(define graph '())
 (define weight 0)
 
 
@@ -96,10 +105,11 @@
                        [vert-margin 10]  
                        [horiz-margin 10]
                        [min-height 500]
-                       [min-width 870]
+                       [min-width 870]                       
                        ))
 
 (define dc (send map-canvas get-dc))
+
 
 
 (define  horizontalPanelTwo (new horizontal-panel% [parent verticalPanel]
@@ -116,12 +126,19 @@
 
 
 (define addRoadButton (new button% [parent  horizontalPanelTwo]
-             [label "Add Route"]
+             [label "Add Road"]
              [vert-margin 10]  
              [horiz-margin 5]
              [callback (lambda (button event)
                          (send roadFrame show #t)
         )]))
+
+(define selectRouteButton (new button% [parent horizontalPanelTwo]
+             [label "Select Route"]
+             [vert-margin 10]  
+             [horiz-margin 5]
+             [callback (lambda (button event)
+                         (send tripFrame show #t))]))
 
 (define weightLabel (new message% [parent horizontalPanelTwo]
                           [label (string-append "Complete weight: " (number->string weight))]))
@@ -168,7 +185,8 @@
 (define add-city-window-button (new button% [parent verticalCityPanel]
              [label "Ok"]
              [callback (lambda (button event)
-                         (send weightLabel set-label (string-append "Complete weight: " (number->string weight))) ;meter aqui peso total
+                         (set! coords-list (append coords-list (list(list (send addCityText get-value) (send addXText get-value) (send addYText get-value)))))
+                         (set! graph (addNode (send addCityText get-value) graph))
                          (draw-node dc (send addCityText get-value) (string->number (send addXText get-value)) (string->number (send addYText get-value))))]))
 
 
@@ -215,7 +233,12 @@
 (define add-road-window-button (new button% [parent verticalPanelRoute]
              [label "Ok"]
              [callback (lambda (button event)
-                         (draw-line dc (send roadInitialText get-value) (send roadFinalText get-value) #t))]))
+                         (define initialNode (send roadInitialText get-value))
+                         (define finalNode (send roadFinalText get-value))
+                         (define weight (string->number (send roadText get-value)))
+                         (set! graph (addEdge initialNode finalNode weight #t graph))  
+                         (draw-line dc initialNode finalNode #t)                                              
+                         (number-draw (send roadText get-value) initialNode finalNode))]))
 
 
 
@@ -249,18 +272,24 @@
 
 ;DIBUJAR CAMINOS
 (define (draw-line dc origin destiny way)
-  (cond ( (equal? way #f) ;una via
+  (cond ( (equal? way #t) ;una via
           (send
 dc set-pen oneWay)
          )
-        ((equal? way #t)
+        ((equal? way #f)
           (send dc set-pen twoWay)
          )
     )
   (send dc draw-line
-        ((getCoords origin "x")) ((getCoords origin "y"))
-        ((getCoords destiny "x")) ((getCoords destiny "y")) )
+        (getCoords origin "x") (getCoords origin "y")
+        (getCoords destiny "x") (getCoords destiny "y") )
   )
+
+(define (number-draw weight origin destiny) ;sqrt (x1-x2)^2+y^2  /2
+  (define x (/ (+ (getCoords origin "x") (getCoords destiny "x")) 2))
+  (define y (/ (+ (getCoords origin "y") (getCoords destiny "y")) 2))
+  (send dc draw-text weight x y))
+  
 
 
 
@@ -274,10 +303,10 @@ dc set-pen oneWay)
          -1)
        ( (equal? nodo (caar list))
          (cond( (equal? pos "x")
-                (cadar list)
+                (string->number(cadar list))
                )
               ( (equal? pos "y")
-                (caddar list)
+                (string->number(caddar list))
                )
               (else
                -1)
@@ -288,6 +317,79 @@ dc set-pen oneWay)
         )
    )
 )
+
+(define (getPathCoords path)
+  (cond ((null? path)
+         '())
+        (else
+         (append
+          (list (list (getCoords (car path) "x")(getCoords (car path) "y")))
+          (getPathCoords (cdr path))))))
+
+;; S T A R T   T R I P____________________________________________________________________
+(define tripFrame (new frame% [label "Wazitico"]
+                                     [width 200]
+                                     [height 200]
+                                     [style '(no-resize-border)]))
+
+(define (toCityFromTrip)
+  (send cityFrame show #t)
+  (send tripFrame show #f))
+
+(define msg (new message% [parent tripFrame]
+                          [label "Ruta"]))
+
+(define routeOrigin_entry (new text-field%
+                          (label "Origin")
+                          (parent tripFrame)
+                          (init-value "")))
+
+(define routeDestination_entry (new text-field%
+                               (label "Destination")
+                               (parent tripFrame)
+                               (init-value "")))          
+
+
+(new button% [parent tripFrame]
+             [label "Ok"]
+             [callback (lambda (button event)
+                         (define paths (find_all_paths (send routeOrigin_entry get-value)
+                                                       (send routeDestination_entry get-value)
+                                                       graph))
+                         (define shortestPath (min (cdr paths) (car paths) (path_distance (car paths) graph)))
+                         (sleep/yield 0.5)
+                         (draw_all_paths paths)
+                         (draw_path_aux shortestPath "red")
+                         (send weightLabel set-label (string-append "Complete weight: " (number->string (path_distance shortestPath graph))))
+                         )])
+
+(define (min paths pivot weight)
+  (cond((null? paths)
+        pivot)
+       (else
+        (cond ((< (path_distance (car paths) graph) weight)
+               (min (cdr paths) (car paths) (path_distance (car paths) graph)))
+              (else
+               (min (cdr paths) pivot weight))))))
+
+; Returns from ConfigScreen to MapScreen
+(new button% [parent tripFrame]
+             [label "Regresar al Mapa"]
+             [callback (lambda (button event)
+                         (toCityFromTrip))])
+
+
+;; Draw path in the canvas
+(define (draw_path_aux path color)
+  (set_pen color 5 dc)
+  (draw_path (getPathCoords path) dc)
+  )
+
+(define (draw_all_paths paths)
+  (cond ((not(null? paths))
+         (draw_path_aux (car paths) "blue")
+         (draw_all_paths (cdr paths)))))
+         
 
 
 (send mainFrame show #t)
