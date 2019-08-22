@@ -22,7 +22,7 @@
  
  Welcome Window             | Main Window               | PathFinder                |
  :-------------------------:|:-------------------------:|:-------------------------:|
- ![](assets/readme/404.png) | ![](assets/readme/404.png)|![](assets/readme/404.png) |
+ ![](assets/readme/welcome.png) | ![](assets/readme/main.png)|![](assets/readme/path.png) |
  
  
 
@@ -47,6 +47,17 @@ Prerequisites: You must have [Git](https://git-scm.com/book/es/v2/Inicio---Sobre
 
 
 ## How to use?
+The program is very easy and friendly to use
+1. You start by creating some cities in the `Add City` button, you type the name of the city
+and the (X, Y) coordinates you wanna place it.
+2. Then you start to make connections between the cities using the `Add Road` button, this let 
+you decide witch cities to connect, how far they are from each other and if is a two way road or 
+just one way.
+3. When your Map is ready you can `Select Route` to find all possible paths from one city to another
+and the shorter one mark as red, the total distance of this path is displayed in the 
+`Complete weight: ` label.
+4. To clear the current route just press `Select Route` again.
+5. You can add as many cities and roads as you want in the `500x870` canvas.
 
 
 
