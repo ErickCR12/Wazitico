@@ -33,6 +33,7 @@
 (define logou (make-object bitmap% "../assets/logounder.png"))
 
 (define coords-list '())
+(define edges-list '())
 (define graph '())
 (define weight 0)
 
@@ -138,7 +139,16 @@
              [vert-margin 10]  
              [horiz-margin 5]
              [callback (lambda (button event)
+                         (send cityFrame show #t)
+                         (clearCanvas)
                          (send tripFrame show #t))]))
+
+(define (clearCanvas)
+  (send cityFrame show #t)
+  (sleep/yield 0.1)
+  (draw-all-nodes)
+  (draw-all-edges edges-list)
+  )
 
 (define weightLabel (new message% [parent horizontalPanelTwo]
                           [label (string-append "Complete weight: " (number->string weight))]))
@@ -187,7 +197,7 @@
              [callback (lambda (button event)
                          (set! coords-list (append coords-list (list(list (send addCityText get-value) (send addXText get-value) (send addYText get-value)))))
                          (set! graph (addNode (send addCityText get-value) graph))
-                         (draw-node dc (send addCityText get-value) (string->number (send addXText get-value)) (string->number (send addYText get-value))))]))
+                         (draw-node (send addCityText get-value) (string->number (send addXText get-value)) (string->number (send addYText get-value))))]))
 
 
 ;__________________________________ R O A D   F R A M E __________________________________
@@ -235,31 +245,42 @@
              [callback (lambda (button event)
                          (define initialNode (send roadInitialText get-value))
                          (define finalNode (send roadFinalText get-value))
-                         (define weight (string->number (send roadText get-value)))
-                         (set! graph (addEdge initialNode finalNode weight #t graph))  
-                         (draw-line dc initialNode finalNode #t)                                              
-                         (number-draw (send roadText get-value) initialNode finalNode))]))
+                         (define weight  (send roadText get-value))
+                         (set! edges-list (append edges-list (list (list initialNode finalNode weight #t))))
+                         (set! graph (addEdge initialNode finalNode (string->number weight) #t graph))
+                         (draw-edge initialNode finalNode weight #t)
+                         )]))
 
 
+
+(define (draw-edge initialNode finalNode weight isDirected?)
+  (draw-line dc initialNode finalNode isDirected?)                                              
+  (number-draw weight initialNode finalNode)
+  )
+
+(define (draw-all-edges edges-list)
+  (cond ((not(null? edges-list))
+         (draw-edge (caar edges-list) (cadar edges-list) (caddar edges-list) (cadr(cddar edges-list)))
+         )))
 
 ; DIBUJAR NODOS
 (define (draw-all-nodes)
-  (draw-all-nodes-aux coords-list dc)
+  (draw-all-nodes-aux coords-list)
   )
 
 
-(define (draw-all-nodes-aux list dc)
+(define (draw-all-nodes-aux list)
   (cond ( (null? (cdr list) )
-              (draw-node dc (caar list) (cadar list) (caddar list) )
+              (draw-node (caar list) (string->number (cadar list)) (string->number (caddar list)) )
            )
         (else
-             (draw-node dc (caar list) (cadar list) (caddar list) )
-             (draw-all-nodes-aux (cdr list) dc)
+             (draw-node (caar list) (string->number (cadar list)) (string->number(caddar list)) )
+             (draw-all-nodes-aux (cdr list))
          )))
 
 
 
-(define (draw-node dc node x y)
+(define (draw-node node x y)
   (send dc set-brush lightblue-brush)
   (send dc set-pen blackPen)
   (send dc draw-ellipse (- x 15) (- y 15) 30 30)
