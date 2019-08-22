@@ -33,7 +33,11 @@
 ;; Finds all paths between two points
 ;; Uses Width First Search
 (define (find_all_paths start end graph)
-  (find_all_paths_aux (list (list start)) end graph '())        
+  (cond((not(null? graph))
+        (find_all_paths_aux (list (list start)) end graph '()))
+       (else
+        '())
+       )
 )
 
 (define (find_all_paths_aux paths end graph result)
@@ -92,10 +96,12 @@
 
 ;; Finds the distance for the path in the graph
 (define (path_distance path graph)
-  (cond ((<= (length path) 1) 0)
+  (cond ((null? path)
+          -1)
+         ((<= (length path) 1)
+          0)
         (else (+ (nodes_distance (car path) (cadr path) graph)
-                 (path_distance (cdr path) graph)))
-  )
+                 (path_distance (cdr path) graph))))
 )
 
 

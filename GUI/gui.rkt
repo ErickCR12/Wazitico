@@ -35,7 +35,7 @@
 (define coords-list '())
 (define edges-list '())
 (define graph '())
-(define weight 0)
+(define weight "-----------")
 
 
 ;Pens
@@ -140,7 +140,8 @@
              [horiz-margin 5]
              [callback (lambda (button event)
                          (send cityFrame show #t)
-                         (clearCanvas)
+                         (cond((not(null? coords-list))
+                               (clearCanvas)))
                          (send tripFrame show #t))]))
 
 (define (clearCanvas)
@@ -151,7 +152,7 @@
   )
 
 (define weightLabel (new message% [parent horizontalPanelTwo]
-                          [label (string-append "Complete weight: " (number->string weight))]))
+                          [label (string-append "Complete weight: " weight)]))
 
 
 ;__________________________________ A D D    C I T Y ___________________________________
@@ -195,9 +196,15 @@
 (define add-city-window-button (new button% [parent verticalCityPanel]
              [label "Ok"]
              [callback (lambda (button event)
-                         (set! coords-list (append coords-list (list(list (send addCityText get-value) (send addXText get-value) (send addYText get-value)))))
-                         (set! graph (addNode (send addCityText get-value) graph))
-                         (draw-node (send addCityText get-value) (string->number (send addXText get-value)) (string->number (send addYText get-value))))]))
+                         (define nodeName (send addCityText get-value))
+                         (define xCoord (send addXText get-value))
+                         (define yCoord (send addYText get-value))
+                         (cond((not (or (equal? nodeName "") (equal? xCoord "") (equal? yCoord "")))
+                               (set! coords-list (append coords-list (list(list nodeName xCoord yCoord))))
+                               (set! graph (addNode nodeName graph))
+                               (draw-node nodeName (string->number xCoord) (string->number yCoord))))
+                         (send addCityFrame show #f)
+                         )]))
 
 
 ;__________________________________ R O A D   F R A M E __________________________________
@@ -240,15 +247,21 @@
                                     ))
 
 
+(define wayCheck (new check-box%  
+      [label "One way road"]  
+      [parent verticalPanelRoute]))
+
 (define add-road-window-button (new button% [parent verticalPanelRoute]
              [label "Ok"]
              [callback (lambda (button event)
                          (define initialNode (send roadInitialText get-value))
                          (define finalNode (send roadFinalText get-value))
                          (define weight  (send roadText get-value))
-                         (set! edges-list (append edges-list (list (list initialNode finalNode weight #t))))
-                         (set! graph (addEdge initialNode finalNode (string->number weight) #t graph))
-                         (draw-edge initialNode finalNode weight #t)
+                         (define isDirected? (send wayCheck get-value))
+                         (set! edges-list (append edges-list (list (list initialNode finalNode weight isDirected?))))
+                         (set! graph (addEdge initialNode finalNode (string->number weight) isDirected? graph))
+                         (draw-edge initialNode finalNode weight isDirected?)
+                         (send roadFrame show #f)
                          )]))
 
 
@@ -378,11 +391,15 @@ dc set-pen oneWay)
                          (define paths (find_all_paths (send routeOrigin_entry get-value)
                                                        (send routeDestination_entry get-value)
                                                        graph))
-                         (define shortestPath (min (cdr paths) (car paths) (path_distance (car paths) graph)))
-                         (sleep/yield 0.5)
-                         (draw_all_paths paths)
-                         (draw_path_aux shortestPath "red")
+                         (print paths)
+                         (define shortestPath '())
+                         (cond ((not(null? paths))
+                               (set! shortestPath (min (cdr paths) (car paths) (path_distance (car paths) graph)))
+                               (sleep/yield 0.5)
+                               (draw_all_paths paths)
+                               (draw_path_aux shortestPath "red")))
                          (send weightLabel set-label (string-append "Complete weight: " (number->string (path_distance shortestPath graph))))
+                         (send tripFrame show #f)
                          )])
 
 (define (min paths pivot weight)

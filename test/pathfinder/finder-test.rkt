@@ -27,6 +27,7 @@
 ;; Finds all paths from a to d using Width First Search
 (define (find_all_paths_test)
   (cond ((and
+         (equal? (find_all_paths 'a 'd '()) '() )
          (equal? (find_all_paths 'a 'd test_graph) '((a c d) (a b d) (a b c d)) )
          (equal? (find_all_paths 'a 'e test_graph) '() )  
          ) (print "OK find_all_paths_test"))
