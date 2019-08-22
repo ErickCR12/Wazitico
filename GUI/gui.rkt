@@ -168,8 +168,8 @@
 (define add-city-window-button (new button% [parent verticalCityPanel]
              [label "Ok"]
              [callback (lambda (button event)
-                         (send weightLabel set-label (string-append "Complete weight: " (number->string weight)) ;meter aqui peso total
-                         (draw-node dc (send addCityText get-value) (string->number (send addXText get-value)) (string->number (send addYText get-value)))))]))
+                         (send weightLabel set-label (string-append "Complete weight: " (number->string weight))) ;meter aqui peso total
+                         (draw-node dc (send addCityText get-value) (string->number (send addXText get-value)) (string->number (send addYText get-value))))]))
 
 
 ;__________________________________ R O A D   F R A M E __________________________________
