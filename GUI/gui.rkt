@@ -145,7 +145,7 @@
 
 (define (clearCanvas)
   (send cityFrame show #t)
-  (sleep/yield 0.1)
+  (sleep/yield 0.01)
   (draw-all-nodes)
   (draw-all-edges edges-list)
   )
@@ -261,7 +261,8 @@
 (define (draw-all-edges edges-list)
   (cond ((not(null? edges-list))
          (draw-edge (caar edges-list) (cadar edges-list) (caddar edges-list) (cadr(cddar edges-list)))
-         )))
+         (draw-all-edges (cdr edges-list)))
+         ))
 
 ; DIBUJAR NODOS
 (define (draw-all-nodes)
