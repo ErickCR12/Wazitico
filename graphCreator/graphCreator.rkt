@@ -27,19 +27,18 @@
 
 
 ;;addAllNodes
-;;
-;;
+;;Receives a list containing nodes and a graph as parameters.
+;;Adds every node in the received list into the graph.
 (define (addAllNodes nodeList graph)
-  (addAllNodesAux nodeList graph))
-
-
-(define (addAllNodesAux nodeList graph)
   (cond ((null? nodeList)
          graph)
         (else
-         (addAllNodesAux (cdr nodeList) (addNode (car nodeList) graph)))))
+         (addAllNodes (cdr nodeList) (addNode (car nodeList) graph)))))
 
 
+;;hasEdge?
+;;Receives a node and a list with edges of a node.
+;;Checks if the node is already in the list of edges.
 (define (hasEdge? newNode edgesList)
   (cond ((null? edgesList)
          #f)
@@ -49,6 +48,10 @@
          (hasEdge? newNode (cdr edgesList)))))
 
 
+;;addEdge
+;;Receives an origin node and a end node to create a new edge in the graph. It also receives the weight of the edge and a boolean indicating
+;; if it is directed or not
+;;Return the graph with the new edge created.
 (define (addEdge originNode endNode weight isDirected? graph)
   (cond ((and (hasNode? originNode graph) (hasNode? endNode graph))
          (cond (isDirected?
