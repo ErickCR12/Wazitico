@@ -1,6 +1,6 @@
 #lang racket
 
-(require "../../drawer/drawer.rkt")
+(require "../../src/drawer/drawer.rkt")
 
 
 ;; Creates a bitmap and saves it as png

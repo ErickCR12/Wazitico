@@ -1,6 +1,6 @@
 #lang racket
 
-(require "../../pathfinder/finder.rkt")
+(require "../../src/pathfinder/finder.rkt")
 (provide run_finder)
 
 ;; Graph made for testing

@@ -2,9 +2,13 @@
 
 (require racket/gui
          racket/draw)
+
 (require "../drawer/drawer.rkt")
 (require "../graphCreator/graphCreator.rkt")
 (require "../pathfinder/finder.rkt")
+
+(provide run
+         logo_path)
 
 
 (define bitmap-blank
@@ -29,8 +33,13 @@
                    (or (send dc get-bitmap) (bitmap-blank)))])]))
 
 
-(define logo (make-object bitmap% "../assets/logo.png"))
-(define logou (make-object bitmap% "../assets/logounder.png"))
+(define logo (make-object bitmap% "../../assets/logo.png"))
+(define logou (make-object bitmap% "../../assets/logounder.png"))
+
+(define (logo_path path)
+  (set! logo (make-object bitmap% (string-append path "logo.png")))
+  (set! logou (make-object bitmap% (string-append path "logounder.png")))
+  )
 
 (define coords-list '())
 (define edges-list '())
@@ -431,4 +440,7 @@ dc set-pen oneWay)
          
 
 
-(send mainFrame show #t)
+;;_____________RUN________________
+(define (run)
+  (sleep/yield 1)
+  (send mainFrame show #t))

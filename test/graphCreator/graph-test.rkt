@@ -2,7 +2,7 @@
 
 (provide run_creator)
 
-(require "../../graphCreator/graphCreator.rkt")
+(require "../../src/graphCreator/graphCreator.rkt")
 
 (define graph '())
 
