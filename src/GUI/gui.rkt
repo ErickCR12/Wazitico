@@ -381,7 +381,7 @@ dc set-pen oneWay)
   (send tripFrame show #f))
 
 (define msg (new message% [parent tripFrame]
-                          [label "Ruta"]))
+                          [label "Trip"]))
 
 (define routeOrigin_entry (new text-field%
                           (label "Origin")
@@ -422,7 +422,7 @@ dc set-pen oneWay)
 
 ; Returns from ConfigScreen to MapScreen
 (new button% [parent tripFrame]
-             [label "Regresar al Mapa"]
+             [label "Return to Map"]
              [callback (lambda (button event)
                          (toCityFromTrip))])
 
